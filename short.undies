@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+function main__ {
+  echo 'You ran me with '${@:-'no args.'}
+  echo 'Try: '$__app__' help'
+}
