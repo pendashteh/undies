@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+function __help {
+  echo 'Tasks:'
+  typeset -F | cut -d' ' -f3- | grep __$ | grep -v -E '^__$|main__'
+  echo 'Args:'
+  printf -- '%s\n' $@
+}
+
+function __ {
+  for arg; do
+    case $arg in
+      --help)
+        shift
+        __help "$@"
+        return
+        ;;
+      *)
+        return
+        ;;
+    esac
+  done
+  set -- $(tac <<<$(printf '%s\n' "${BASH_ARGV[@]}"))
+  typeset -F ${1:-'main'}__ >/dev/null && func=${1}__ && shift || func='__ --help'
+  $func "$@"
+}
+
+__
