@@ -10,15 +10,17 @@ function help__ {
     return
   fi
   for task in $(typeset -F | cut -d' ' -f3- | grep __$ | sort | sed 's|__||g' | grep -v -E 'main'); do
-    printf ' %s help %s\n' $__app__ $task
+    printf ' %s help %s\n' "$__app__" $task
   done
 }
 
 function __ {
   __app__=$0
+  __src__=$0
   if [ -e "$1" ]; then
-    source $(dirname $1)/$(basename $1)
-    __app__=$1
+    __src__=$(dirname $1)/$(basename $1)
+    source $__src__
+    __app__="$__app__ $__src__"
     shift
   fi
   test ! -z "$1" && typeset -F ${1}__ >/dev/null && __task__=$1 && shift || __task__='main'
