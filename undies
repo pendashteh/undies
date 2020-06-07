@@ -2,8 +2,16 @@
 
 UNDIES="__"
 
-function __help {
-  typeset -F | cut -d' ' -f3- | grep __$ | sort | sed 's|__||g' | grep -v -E 'main' | xargs -I {} printf ' $ %s %s\n' $__app__ {}
+help__help='Usage: __app__ help [task]'
+function help__ {
+  if [ ! -z "$1" ] && typeset -F ${1}__ >/dev/null; then
+    help_var=${1}__help
+    sed "s|__app__|$__app__|g" <<<${!help_var}
+    return
+  fi
+  for task in $(typeset -F | cut -d' ' -f3- | grep __$ | sort | sed 's|__||g' | grep -v -E 'main'); do
+    printf ' %s help %s\n' $__app__ $task
+  done
 }
 
 function __ {
