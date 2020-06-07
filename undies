@@ -24,7 +24,7 @@ function __ {
     shift
   fi
   test ! -z "$1" && typeset -F ${1}__ >/dev/null && __task__=$1 && shift || __task__='main'
-  ${__task__}__ "$@"
+  ${__task__}__ "$@" || help__ "$@"
 }
 
 __ "$@"
