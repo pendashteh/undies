@@ -1,17 +1,65 @@
 #!/usr/bin/env bash
 
-UNDIES="__"
+__="__"
 
-help__help='Usage: __app__ help [task]'
-function help__ {
-  if [ ! -z "$1" ] && typeset -F ${1}__ >/dev/null; then
+__API=2
+
+function __help {
+  if [ ! -z "$1" ] && __exists ${1}__; then
     help_var=${1}__help
     sed "s|__app__|$__app__|g" <<<${!help_var}
     return
   fi
-  for task in $(typeset -F | cut -d' ' -f3- | grep __$ | sort | sed 's|__||g' | grep -v -E 'main'); do
+  for task in $(__tasks); do
     printf ' %s help %s\n' "$__app__" $task
   done
+}
+
+function __exec {
+  : 'Usage: > __exec [bash commands] # prompts the commands for the user and executes them'
+  echo "> $@"
+  "$@"
+}
+
+function __run {
+  : 'Usage: > __run [task] [args..]'
+  local task=${1:-'--'}; shift
+  test "$task" = '--' && task='__main'
+  test ! -z "$task" && __exists ${task}__ && __task__=$task || return 1
+  __puton__ "$@" && ${__task__}__ "$@" && __takeoff__ "$@"
+}
+
+function __exists {
+  : 'Usage: > __exists $fname # Returns false if $fname is not a function.'
+  typeset -F $1 >/dev/null || return 1
+}
+
+function __tasks {
+  typeset -F | cut -d' ' -f3- | grep ^[^__]*__$ | sort | sed 's|__||g'
+}
+
+__exists __main__ ||
+function __main__ {
+  : 'display help if __main__ is not defined.'
+  __help "$@"
+}
+
+help__help=${help__help:-'Usage: __app__ help [task]'}
+__exists help__ ||
+function help__ {
+  __help "$@"
+}
+
+__puton__help='Return false to stop the application.'
+__exists __puton__ ||
+function __puton__ {
+  : ${__app__} help ${FUNCNAME::-2}
+}
+
+__takeoff__help='Called if the task callback returns success.'
+__exists __takeoff__ ||
+function __takeoff__ {
+  : ${__app__} help ${FUNCNAME::-2}
 }
 
 function __ {
@@ -23,8 +71,7 @@ function __ {
     __app__="$__app__ $__src__"
     shift
   fi
-  test ! -z "$1" && typeset -F ${1}__ >/dev/null && __task__=$1 && shift || __task__='main'
-  ${__task__}__ "$@" || help__ "$@"
+  __run "$@" || : 'failed to __run '$@
 }
 
 __ "$@"
