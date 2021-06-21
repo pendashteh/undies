@@ -1,0 +1,11 @@
+
+There is an issue when an undie script sources undies as follows:
+```
+. undies
+```
+and then we pass a valid path to this script as an argument.
+```
+$ ./script.undies /path/to/file
+```
+In this case, it will try to source it (at line 70)
+
