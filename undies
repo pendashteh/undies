@@ -63,7 +63,7 @@ function __takeoff__ {
 }
 
 function __ {
-  __app__=$0
+  __app__=${__app__:-$0}
   __src__=$0
   if [ -e "$1" ]; then
     __src__=$(dirname $1)/$(basename $1)
