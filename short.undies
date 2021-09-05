@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
+__main__help='Sample undies app, showcasing different features.'
 function __main__ {
   echo 'You ran me with '${@:-'no args.'}
   echo 'Try: '$__app__' help'
 }
 
-function demo__ {
+demo__help='Prints a test with the app name|path.'
+demo__() {
   echo 'We are running: '${__app__}
 }

@@ -5,14 +5,8 @@ __="__"
 __API=2
 
 function __help {
-  if [ ! -z "$1" ] && __exists ${1}__; then
-    help_var=${1}__help
-    sed "s|__app__|$__app__|g" <<<${!help_var}
-    return
-  fi
-  for task in $(__tasks); do
-    printf ' %s help %s\n' "$__app__" $task
-  done
+  help_var=${1}__help
+  sed "s|__app__|$__app__|g" <<<${!help_var}
 }
 
 function __exec {
@@ -38,16 +32,28 @@ function __tasks {
   typeset -F | cut -d' ' -f3- | grep ^[^__]*__$ | sort | sed 's|__||g'
 }
 
+__main__help=${__main__help:-''}
 __exists __main__ ||
 function __main__ {
   : 'display help if __main__ is not defined.'
-  __help "$@"
+  __run help "$@"
 }
 
 help__help=${help__help:-'Usage: __app__ help [task]'}
 __exists help__ ||
 function help__ {
-  __help "$@"
+  if [ -n "$1" ] && __exists ${1}__; then
+    local task=$1
+    printf '# %s\n\n' "$(__help $task)"
+    declare -f ${task}__
+    return
+  fi
+  [[ -n $__main__help ]] && printf '%s\n\n' "$__main__help"
+  printf 'Usage: %s [task]\n\n' $__app__
+  echo 'Tasks:'
+  for task in $(__tasks); do
+    printf ' - %s\t# %s\n' $task "$(__help $task)"
+  done
 }
 
 __puton__help='Return false to stop the application.'
