@@ -4,6 +4,8 @@ __="__"
 
 __API=2
 
+__confirm__=${__confirm__:-'1'}
+
 function __help {
   help_var=${1}__help
   sed "s|__app__|$__app__|g" <<<${!help_var}
@@ -12,6 +14,9 @@ function __help {
 function __exec {
   : 'Usage: > __exec [bash commands] # prompts the commands for the user and executes them'
   echo "> $@"
+  test -n ${__confirm__} && read -n 1 -p 'Are you sure? Y|n ' __confirm__
+  echo ''
+  case $__confirm__ in n|N) return;; esac
   "$@"
 }
 
