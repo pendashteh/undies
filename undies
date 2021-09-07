@@ -49,7 +49,7 @@ function help__ {
     return
   fi
   [[ -n $__main__help ]] && printf '%s\n\n' "$__main__help"
-  printf 'Usage: %s [task]\n\n' $__app__
+  printf 'Usage: %s [task]\n\n' "$__app__"
   echo 'Tasks:'
   for task in $(__tasks); do
     printf ' - %s\t# %s\n' $task "$(__help $task)"
