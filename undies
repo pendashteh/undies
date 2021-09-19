@@ -8,7 +8,12 @@ __confirm__=${__confirm__:-'1'}
 
 function __help {
   help_var=${1}__help
-  sed "s|__app__|$__app__|g" <<<${!help_var}
+  sed "s|__app__|$(__app)|g" <<<${!help_var}
+}
+
+function __app {
+  : 'retrieves the app name, ideally the executed command.'
+  basename $__app__
 }
 
 function __exec {
@@ -54,10 +59,9 @@ function help__ {
     return
   fi
   [[ -n $__main__help ]] && printf '%s\n\n' "$__main__help"
-  printf 'Usage: %s [task]\n\n' "$__app__"
-  echo 'Tasks:'
+  echo 'Available tasks:'
   for task in $(__tasks); do
-    printf ' - %s\t# %s\n' $task "$(__help $task)"
+    printf ' - %-10s# %s\n' $task "$(__help $task)"
   done
 }
 
