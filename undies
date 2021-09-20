@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
-
-__="__"
+#
+# $ /path/to/undies -- /path/to/script.undies
+#
+# $ /path/to/script.undies
+#
+# $ tail /path/to/script.undies -n1
+# > . undies
+#
+__=${__:-__}
 
 __API=2
 
@@ -84,11 +91,13 @@ function __ {
   if [ "$1" = "--" ] && [ -e "$2" ]; then
     shift
     __src__=$(dirname $1)/$(basename $1)
-    source $__src__
+    __=! source $__src__
     __app__="$__app__ $__src__"
     shift
   fi
   __run "$@" || >&2 echo 'failed to __run '$@
 }
+
+[[ "$__" = __ ]] || return
 
 __ "$@"
