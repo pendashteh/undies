@@ -80,13 +80,15 @@ function __takeoff__ {
 function __ {
   __app__=${__app__:-$0}
   __src__=$0
-  if [ -e "$1" ]; then
+  : '$ undies -- /path/to/undies'
+  if [ "$1" = "--" ] && [ -e "$2" ]; then
+    shift
     __src__=$(dirname $1)/$(basename $1)
     source $__src__
     __app__="$__app__ $__src__"
     shift
   fi
-  __run "$@" || : 'failed to __run '$@
+  __run "$@" || >&2 echo 'failed to __run '$@
 }
 
 __ "$@"
