@@ -13,6 +13,15 @@ __API=2
 
 __confirm__=${__confirm__:-'1'}
 
+
+##
+# If set to a non-empty value, will take the first argument as $__id__ and the 2nd as task
+#
+# + __id__='--'
+# $ app [id] [task]
+#
+__id__=${__id__:-''}
+
 function __help {
   help_var=${1}__help
   sed "s|__app__|$(__app)|g" <<<${!help_var}
@@ -66,6 +75,10 @@ function help__ {
     return
   fi
   [[ -n $__main__help ]] && printf '%s\n\n' "$__main__help"
+  if [ -n $__id__ ]; then
+    echo 'Usage:'
+    printf ' %s %s [task]\n\n' $(basename $__app__) ${__id__:-'[id]'}
+  fi
   echo 'Available tasks:'
   for task in $(__tasks); do
     printf ' - %-10s# %s\n' $task "$(__help $task)"
@@ -93,6 +106,10 @@ function __ {
     __src__=$(dirname $1)/$(basename $1)
     __=! source $__src__
     __app__="$__app__ $__src__"
+    shift
+  fi
+  if [ ! -z $__id__ ]; then
+    __id__=$1
     shift
   fi
   __run "$@" || >&2 echo 'failed to __run '$@
