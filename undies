@@ -36,8 +36,12 @@ __parent__=${__parent__:-''}
 __id__=${__id__:-''}
 
 function __help {
-  help_var=${1}__help
+  help_var=$(j __ $__parent__ ${1} help)
   sed "s|__app__|$(__app)|g" <<<${!help_var}
+}
+
+function j () {
+  sed "s|\s|$1|g" <<<${@:2}
 }
 
 function __app {
@@ -74,7 +78,7 @@ function __exists {
 
 function __tasks {
   test -z $__parent__ || prefix=${__parent__}__
-  typeset -F | cut -d' ' -f3- | grep ^${prefix}[^__].*__$ | sort | sed 's|__| |g'
+  typeset -F | cut -d' ' -f3- | grep ^${prefix}[^__].*__$ | sort | sed 's|__| |g' | sed "s|$__parent__\s||g"
 }
 
 __main__help=${__main__help:-''}
@@ -96,7 +100,7 @@ function help__ {
   [[ -n $__main__help ]] && printf '%s\n\n' "$__main__help"
   if [ -n $__id__ ]; then
     echo 'Usage:'
-    printf ' %s %s [task]\n\n' $(basename $__app__) ${__id__:-'[id]'}
+    printf ' %s %s %s [task]\n\n' $(basename $__app__) ${__id__:-'[id]'} ${__parent__}
   fi
   echo 'Available tasks:'
   for task in $(__tasks); do
