@@ -35,7 +35,7 @@ function __app {
 function __exec {
   : 'Usage: > __exec [bash commands] # prompts the commands for the user and executes them'
   echo "> $@"
-  test -n ${__confirm__} && read -n 1 -p 'Are you sure? Y|n ' __confirm__
+  test ! -z ${__confirm__} && read -n 1 -p 'Are you sure? Y|n ' __confirm__
   echo ''
   case $__confirm__ in n|N) return;; esac
   "$@"
