@@ -127,13 +127,17 @@ function __ {
     __app__="$__app__ $__src__"
     shift
   fi
-  if [ ! -z $__id__ ]; then
+  __run "$@" || (
+    : 'Usge: __app__ [id] __task__ [..args]'
+    __parent__='id'
     __id__=$1
     shift
-  fi
-  __run "$@" || >&2 echo 'failed to __run '$@
+    id____main__ () {
+      __main__ "$@"
+    }
+    __run "$@"
+  ) || >&2 echo 'failed to __run '$@
 }
 
-[[ "$__" = __ ]] || return
+test $__ = __ && __ "$@" || return
 
-__ "$@"
