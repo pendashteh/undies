@@ -15,6 +15,19 @@ __confirm__=${__confirm__:-'1'}
 
 
 ##
+#
+# parent__ () {
+#   : 'put on'
+#   child__ () {
+#     : 'childish stuff'
+#   }
+#   __parent__=parent __run "$@"
+#   : 'take off'
+# }
+#
+__parent__=${__parent__:-''}
+
+##
 # If set to a non-empty value, will take the first argument as $__id__ and the 2nd as task
 #
 # + __id__='--'
@@ -45,8 +58,13 @@ function __run {
   : 'Usage: > __run [task] [args..]'
   local task=${1:-'--'}; shift
   test "$task" = '--' && task='__main'
-  test ! -z "$task" && __exists ${task}__ && __task__=$task || return 1
-  __puton__ "$@" && ${__task__}__ "$@" && __takeoff__ "$@"
+  local func=$(__func $task)
+  test ! -z "$task" && __exists ${func} && __task__=$task || return 1
+  __puton__ "$@" && ${func} "$@" && __takeoff__ "$@"
+}
+
+function __func () {
+  test -z $__parent__ || echo -n ${__parent__}'__' && echo -n ${1}__
 }
 
 function __exists {
@@ -55,7 +73,7 @@ function __exists {
 }
 
 function __tasks {
-  typeset -F | cut -d' ' -f3- | grep ^[^__]*__$ | sort | sed 's|__||g'
+  typeset -F | cut -d' ' -f3- | grep ^${__parent__}__[^__].*__$ | sort | sed 's|__| |g'
 }
 
 __main__help=${__main__help:-''}
