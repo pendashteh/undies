@@ -73,7 +73,8 @@ function __exists {
 }
 
 function __tasks {
-  typeset -F | cut -d' ' -f3- | grep ^${__parent__}__[^__].*__$ | sort | sed 's|__| |g'
+  test -z $__parent__ || prefix=${__parent__}__
+  typeset -F | cut -d' ' -f3- | grep ^${prefix}[^__].*__$ | sort | sed 's|__| |g'
 }
 
 __main__help=${__main__help:-''}
