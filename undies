@@ -66,29 +66,26 @@ function __exec {
 }
 
 function __sub {
-  __parent__=$__task__
-  __args__=("${__args__[@]:1}")
-  __run ${__args__}
+  __run_prefix=${FUNCNAME[1]}
+  __run "$@"
 }
 
+__run_prefix=''
 function __run {
   : 'Usage: > __run [task] [args..]'
   __task__=$1
   __args__=("$@")
-  __fn_prefix=''
   shift
   __process
-  local func=${__fn_prefix}${__task__}__
+  local func=${__run_prefix}${__task__}__
   __exists ${func} || return
   __puton__ "$@" && ${func} "$@" && __takeoff__ "$@"
 }
 
 function __process {
   if [ -z $__task__ ]; then
-    __fn_prefix=''
+    __run_prefix=''
     __task__='__main'
-  elif [ ! -z $__parent__ ]; then
-    __fn_prefix=${__parent__}__
   fi
 }
 
