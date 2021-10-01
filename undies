@@ -94,7 +94,13 @@ function __process {
 
 function __exists {
   : 'Usage: > __exists $fname # Returns false if $fname is not a function.'
-  typeset -F $1 >/dev/null || return $__err_fn_na
+  typeset -F $1 >/dev/null || __return $__err_fn_na $1
+}
+
+function __return {
+  read -r number info <<< $@
+  __return_info=$info
+  return $number
 }
 
 function __tasks {
@@ -146,10 +152,11 @@ __exists __fallback__ ||
 function __fallback__ {
   case $? in
     $__err_fn_na)
-      echo >&2 "task $1 wasn't found."
+      echo >&2 "task $__return_info wasn't found."
+      help__
       ;;
     *)
-      echo >&2 "no result or failed."
+      >&2 __help $__task__
 
   esac
 }
