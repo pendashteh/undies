@@ -11,6 +11,8 @@ __=${__:-__}
 
 __API=2
 
+__err_fn_na=101 ;: 'function does not exists'
+
 __confirm__=${__confirm__:-'1'}
 
 
@@ -73,7 +75,7 @@ function __func () {
 
 function __exists {
   : 'Usage: > __exists $fname # Returns false if $fname is not a function.'
-  typeset -F $1 >/dev/null || return 1
+  typeset -F $1 >/dev/null || return $__err_fn_na
 }
 
 function __tasks {
@@ -120,6 +122,19 @@ function __takeoff__ {
   : ${__app__} help ${FUNCNAME::-2}
 }
 
+__fallbck__help='Called if the task is not found or the last command returns non-zero.'
+__exists __fallback__ ||
+function __fallback__ {
+  case $? in
+    $__err_fn_na)
+      echo >&2 "task $1 wasn't found."
+      ;;
+    *)
+      echo >&2 "no result or failed."
+
+  esac
+}
+
 function __ {
   __app__=${__app__:-$0}
   __src__=$0
@@ -135,7 +150,7 @@ function __ {
     __id__=$1
     shift
   fi
-  __run "$@" || >&2 echo 'failed to __run '$@
+  __run "$@" || __fallback__ "$@" || >&2 echo 'failed to __run '$@
 }
 
 [[ "$__" = __ ]] || return
