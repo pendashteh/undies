@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 #
+#
+# Usage:
+# 1: call as argument for undies
 # $ /path/to/undies -- /path/to/script.undies
 #
+# 2: source inside the script
 # $ /path/to/script.undies
-#
 # $ tail /path/to/script.undies -n1
 # > . undies
 #
@@ -15,7 +18,6 @@ __err_fn_na=101 ;: 'function does not exists'
 
 __confirm__=${__confirm__:-'1'}
 
-
 ##
 #
 # parent__ () {
@@ -23,8 +25,11 @@ __confirm__=${__confirm__:-'1'}
 #   child__ () {
 #     : 'childish stuff'
 #   }
-#   __parent__=parent __run "$@"
+#   __sub parent "$@"
 #   : 'take off'
+# }
+# parent__subcommand () {
+#   : '__app__ parent subcommand'
 # }
 #
 __parent__=${__parent__:-''}
@@ -60,17 +65,31 @@ function __exec {
   "$@"
 }
 
+function __sub {
+  __parent__=$__task__
+  __args__=("${__args__[@]:1}")
+  __run ${__args__}
+}
+
 function __run {
   : 'Usage: > __run [task] [args..]'
-  local task=${1:-'--'}; shift
-  test "$task" = '--' && task='__main'
-  local func=$(__func $task)
-  test ! -z "$task" && __exists ${func} && __task__=$task || return 1
+  __task__=$1
+  __args__=("$@")
+  __fn_prefix=''
+  shift
+  __process
+  local func=${__fn_prefix}${__task__}__
+  __exists ${func} || return
   __puton__ "$@" && ${func} "$@" && __takeoff__ "$@"
 }
 
-function __func () {
-  test -z $__parent__ || echo -n ${__parent__}'__' && echo -n ${1}__
+function __process {
+  if [ -z $__task__ ]; then
+    __fn_prefix=''
+    __task__='__main'
+  elif [ ! -z $__parent__ ]; then
+    __fn_prefix=${__parent__}__
+  fi
 }
 
 function __exists {
@@ -80,14 +99,14 @@ function __exists {
 
 function __tasks {
   test -z $__parent__ || prefix=${__parent__}__
-  typeset -F | cut -d' ' -f3- | grep ^${prefix}[^__].*__$ | sort | sed 's|__| |g' | sed "s|$__parent__\s||g"
+  typeset -F | cut -d' ' -f3- | grep ^${prefix}[^__][^__]*__$ | sort | sed 's|__| |g' | sed "s|$__parent__\s||g"
 }
 
 __main__help=${__main__help:-''}
 __exists __main__ ||
 function __main__ {
   : 'display help if __main__ is not defined.'
-  __run help "$@"
+  help__ "$@"
 }
 
 help__help=${help__help:-'Usage: __app__ help [task]'}
