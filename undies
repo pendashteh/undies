@@ -67,14 +67,12 @@ function __exec {
 
 function __sub {
   __parent__=$__task__
-  __args__=("${__args__[@]:1}")
-  __run ${__args__}
+  __run $@
 }
 
 function __run {
   : 'Usage: > __run [task] [args..]'
   __task__=$1
-  __args__=("$@")
   __fn_prefix=''
   shift
   __process
