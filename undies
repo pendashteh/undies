@@ -16,7 +16,7 @@ __API=2
 
 __err_fn_na=101 ;: 'function does not exists'
 
-__confirm__=${__confirm__:-'1'}
+__confirm__=${__confirm__-1}
 
 ##
 #
