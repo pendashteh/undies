@@ -10,6 +10,23 @@
 # $ tail /path/to/script.undies -n1
 # > . undies
 #
+# Args:
+# $ /path/to/script.undies datadir=$HOME/data task
+# " datadir__=$HOME/data
+# " task__ () {}
+#
+# $ script.undies -- --tasks
+# " undies__tasks () {}
+#
+# $ script.undies --tasks
+# " __tasks () {}
+#
+# " . undies --       # only loads the methods
+# " . undies -- --fn  # runs undies__fn
+# " . undies -- --run $@  # as `. undies`
+# " . undies -- /path $@  # as `. undies`
+
+
 __=${__:-__}
 
 __API=2
@@ -167,7 +184,7 @@ function __ {
     shift
     __src__=$(dirname $1)/$(basename $1)
     __=! source $__src__
-    __app__="$__app__ $__src__"
+    __app__="$__app__ -- $__src__"
     shift
   fi
   if [ ! -z $__id__ ]; then
