@@ -60,7 +60,6 @@ function __exec {
   : 'Usage: > __exec [bash commands] # prompts the commands for the user and executes them'
   echo "> $@"
   test ! -z ${__confirm__} && read -n 1 -p 'Are you sure? Y|n ' __confirm__
-  echo ''
   case $__confirm__ in n|N) return;; esac
   eval "$@"
 }
@@ -155,7 +154,6 @@ function __fallback__ {
       ;;
     *)
       >&2 __help $__task__
-
   esac
 }
 
