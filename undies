@@ -157,6 +157,12 @@ function __fallback__ {
   esac
 }
 
+__autocomplete () {
+  local name=$1
+  complete -C "$name --tasks" $name
+  #__exec complete -F __compreply $1
+}
+
 function __ {
   __app__=${__app__:-$0}
   __src__=$0
@@ -165,8 +171,18 @@ function __ {
     shift
     __src__=$(dirname $1)/$(basename $1)
     __=! source $__src__
-    __app__="$__app__ $__src__"
+    __app__="$__app__ -- $__src__"
     shift
+  fi
+  : '$ source undies --ac script__|/path/to/script__'
+  if [ "$1" = "--ac" ]; then
+    shift
+    __autocomplete $@
+    return
+  fi
+  if [ "$1" = "--tasks" ]; then
+    __tasks
+    return
   fi
   if [ ! -z $__id__ ]; then
     __id__=$1
