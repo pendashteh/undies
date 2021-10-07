@@ -117,7 +117,8 @@ __exists help__ ||
 function help__ {
   if [ -n "$1" ] && __exists ${1}__; then
     local task=$1
-    printf '# %s\n\n' "$(__help $task)"
+    __help $task | sed 's|@|\n@|g'
+    echo
     declare -f ${task}__
     return
   fi
