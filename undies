@@ -123,9 +123,11 @@ function help__ {
     return
   fi
   [[ -n $__main__help ]] && printf '%s\n\n' "$__main__help"
+  echo 'Usage:'
+  printf ' %s %s %s [task]\n\n' "${__app__}" ${__id__:-'[id]'} ${__parent__}
+  echo $__app__usage
   if [ ! -z $__id__ ]; then
-    echo 'Usage:'
-    printf ' %s %s %s [task]\n\n' $(basename $__app__) ${__id__:-'[id]'} ${__parent__}
+    echo ID: $__id__
   fi
   echo 'Available tasks:'
   for task in $(__tasks); do
@@ -164,15 +166,24 @@ __autocomplete () {
   #__exec complete -F __compreply $1
 }
 
+__source () {
+  __=! source $@
+}
+
 function __ {
-  __app__=${__app__:-$0}
+  __path__=$(realpath $0)
+  __app__=${__app__:-$(basename $__path__)}
+  __cmd__=$__app__
+  __app__usage="$__cmd__ [task]"
   __src__=$0
   : '$ undies -- /path/to/undies'
   if [ "$1" = "--" ] && [ -e "$2" ]; then
     shift
     __src__=$(dirname $1)/$(basename $1)
-    __=! source $__src__
-    __app__="$__app__ -- $__src__"
+    __app__=$__src__
+    __cmd__="$__app__ -- $__src__"
+    __app__usage="$__cmd__ [task]"
+    __source $__src__
     shift
   fi
   : '$ source undies --ac script__|/path/to/script__'
@@ -186,9 +197,21 @@ function __ {
     return
   fi
   if [ ! -z $__id__ ]; then
-    __id__=$1
+    __id__default=$__id__
+    __app__usage="$__cmd__ [id] [task]"
+    __id__=${1:-$__id__default}
+    __cmd__="$__cmd__ $__id__"
     shift
   fi
+
+  local path=$(dirname $__path__)/${__app__}__${1}__
+  if [ -e "$path" ]; then
+    __cmd__="$__cmd__ $1"
+    __app__usage="$__cmd__ [task]"
+    __source $path
+    shift
+  fi
+
   __run "$@" || __fallback__ "$@" || >&2 echo 'failed to __run '$@
 }
 
