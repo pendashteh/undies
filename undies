@@ -105,6 +105,10 @@ function __tasks {
   typeset -F | cut -d' ' -f3- | grep ^${prefix}[^__][^__]*__$ | sort | sed 's|__| |g' | sed "s|$__parent__\s||g"
 }
 
+function __params {
+  declare -p | grep -E '[^-_\s]{4,}__='
+}
+
 __main__help=${__main__help:-''}
 __exists __main__ ||
 function __main__ {
@@ -127,6 +131,9 @@ function help__ {
     echo 'Usage:'
     printf ' %s %s %s [task]\n\n' $(basename $__app__) ${__id__:-'[id]'} ${__parent__}
   fi
+  echo 'Parameters:'
+  __params | awk '{ printf " - %s\n", $3 }'
+  echo
   echo 'Available tasks:'
   for task in $(__tasks); do
     printf ' - %-10s# %s\n' $task "$(__help $task)"
