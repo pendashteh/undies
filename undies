@@ -16,6 +16,8 @@ __API=2
 
 __err_fn_na=101 ;: 'function does not exists'
 
+__dryrun__=${__dryrun__-}
+
 __confirm__=${__confirm__-1}
 
 ##
@@ -70,11 +72,15 @@ function __app {
 }
 
 function __exec {
-  : 'Usage: > __exec [bash commands] # prompts the commands for the user and executes them'
+  : '> __exec [bash commands]'
+  : '; prompts the commands for the user and executes them'
   echo "> $@"
-  test ! -z ${__confirm__} && read -n 1 -p 'Are you sure? Y|n ' __confirm__ && echo
+  test ! -z ${__confirm__} && {
+    read -n 1 -p 'Are you sure? Y|n ' __confirm__
+    echo
+  }
   case $__confirm__ in n|N) return;; esac
-  "$@"
+  test -n "${__dryrun__}" && echo '# '"$@" || "$@"
 }
 
 function __sub {
@@ -207,6 +213,14 @@ function __ {
   fi
   if [ ! -z $__id__ ]; then
     __id__=$1
+    shift
+  fi
+  if [ "$1" = "--dryrun" ]; then
+    __dryrun__=1
+    shift
+  fi
+  if [ "$1" = "--silent" ]; then
+    __confirm__=
     shift
   fi
   __run "$@" || __fallback__ "$@" || >&2 echo 'failed to __run '$@
