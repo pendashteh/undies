@@ -70,7 +70,7 @@ function t () {
 
 function __app {
   : 'retrieves the app name, ideally the executed command.'
-  basename $__app__
+  basename $__src__
 }
 
 function __exec {
