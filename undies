@@ -207,6 +207,28 @@ function __ {
     __app__="$__app__ -- $__src__"
     shift
   fi
+  while true; do
+    # $ ./app --silent-- off task
+    # : __silent__=
+    # $ ./app --socket life run
+    # : socket__=life
+    [[ ! $1 = *--* ]] && break
+    local _var=${1//-/_}
+    shift
+    local _val
+    case $1 in
+      on|true)
+	_val=1
+	;;
+      off|false)
+	_val=
+	;;
+      *)
+	_val=$1
+    esac
+    shift
+    read $_var <<< $_val
+  done
   : '$ source undies --ac script__|/path/to/script__'
   if [ "$1" = "--ac" ]; then
     shift
