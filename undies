@@ -20,6 +20,8 @@ __dryrun__=${__dryrun__-}
 
 __confirm__=${__confirm__-1}
 
+__silent__=${__silent__-}
+
 ##
 #
 # parent__ () {
@@ -74,7 +76,11 @@ function __app {
 function __exec {
   : '> __exec [bash commands]'
   : '; prompts the commands for the user and executes them'
-  echo "> $@"
+  if test -z ${__silent__}; then
+    echo "> $@"
+  else
+    __confirm__=
+  fi
   test ! -z ${__confirm__} && {
     read -n 1 -p 'Are you sure? Y|n ' __confirm__
     echo
