@@ -12,9 +12,9 @@
 #
 __=${__:-__}
 
-__API=3
+__API__=3
 
-__err_fn_na=101 ;: 'function does not exists'
+_err_fn_na=101 ;: 'function does not exists'
 
 __dryrun__=${__dryrun__-}
 
@@ -116,7 +116,7 @@ function __process {
 
 function __exists {
   : 'Usage: > __exists $fname # Returns false if $fname is not a function.'
-  typeset -F $1 >/dev/null || __return $__err_fn_na $1
+  typeset -F $1 >/dev/null || __return $_err_fn_na $1
 }
 
 function __return {
@@ -131,7 +131,7 @@ function __tasks {
 }
 
 function __params {
-  declare -p | grep -E '^[^__]*__=.*' | grep -v '"__"'
+  declare -p | grep -E '[[:space:]]__[^__]+=.*$'
 }
 
 __main__help=${__main__help:-''}
@@ -144,6 +144,7 @@ function __main__ {
 help__help=${help__help:-'Usage: __app__ help [task]'}
 __exists help__ ||
 function help__ {
+  printf -- 'undies API version %s\n\n' $__API__
   if [ -n "$1" ] && __exists ${1}__; then
     local task=$1
     __help $task | sed 's|@|\n@|g'
@@ -157,12 +158,15 @@ function help__ {
     printf ' %s %s %s [task]\n\n' $(basename $__app__) ${__id__:-'[id]'} ${__parent__}
   fi
   echo 'Parameters:'
-  __params | awk '{ printf " - %s\n", $3 }'
+  __params | awk '{ printf " %s\n", $3 }' | sed 's|__|--|g; s|=| |g'
   echo
   echo 'Available tasks:'
   for task in $(__tasks); do
     printf ' - %-10s# %s\n' $task "$(__help $task)"
   done
+  printf -- '\n'
+  printf -- 'Usage:\n'
+  printf -- ' $ %s --param value [task]\n' $(__app)
 }
 
 __puton__help='Return false to stop the application.'
@@ -181,7 +185,7 @@ __fallbck__help='Called if the task is not found or the last command returns non
 __exists __fallback__ ||
 function __fallback__ {
   case $? in
-    $__err_fn_na)
+    $_err_fn_na)
       echo >&2 "task $__return_info wasn't found."
       help__
       ;;
@@ -207,28 +211,6 @@ function __ {
     __app__="$__app__ -- $__src__"
     shift
   fi
-  while true; do
-    # $ ./app --silent-- off task
-    # : __silent__=
-    # $ ./app --socket life run
-    # : socket__=life
-    [[ ! $1 = *--* ]] && break
-    local _var=${1//-/_}
-    shift
-    local _val
-    case $1 in
-      on|true)
-	_val=1
-	;;
-      off|false)
-	_val=
-	;;
-      *)
-	_val=$1
-    esac
-    shift
-    read $_var <<< $_val
-  done
   : '$ source undies --ac script__|/path/to/script__'
   if [ "$1" = "--ac" ]; then
     shift
@@ -251,6 +233,28 @@ function __ {
     __confirm__=
     shift
   fi
+  while true; do
+    # $ ./app --silent-- off task
+    # : __silent__=
+    # $ ./app --socket life run
+    # : socket__=life
+    [[ ! $1 = *--* ]] && break
+    local _var=${1//-/_}
+    shift
+    local _val
+    case $1 in
+      on|true)
+	_val=1
+	;;
+      off|false)
+	_val=
+	;;
+      *)
+	_val=$1
+    esac
+    shift
+    read $_var <<< $_val
+  done
   __run "$@" || __fallback__ "$@" || >&2 echo 'failed to __run '$@
 }
 

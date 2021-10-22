@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+__message=${__message:-'hello world!'}
+
 __main__help='@args ..anything @prints the arguments for demo.'
 function __main__ {
   echo 'You ran me with '${@:-'no args.'}
@@ -8,5 +10,6 @@ function __main__ {
 
 demo__help='@prints a test with the app name|path.'
 demo__() {
-  echo 'We are running: '${__app__}
+  printf -- 'Message: %s\n' "$__message"
+  printf -- 'Try running:\n$ %s --message YOUR_MESSAGE demo\n' "${__app__}"
 }
