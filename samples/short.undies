@@ -13,3 +13,5 @@ demo__() {
   printf -- 'Message: %s\n' "$__message"
   printf -- 'Try running:\n$ %s --message YOUR_MESSAGE demo\n' "${__app__}"
 }
+
+source $(dirname $(realpath $BASH_SOURCE))/vendor/autoload.sh
