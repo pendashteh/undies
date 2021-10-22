@@ -131,7 +131,7 @@ function __tasks {
 }
 
 function __params {
-  declare -p | grep -E '[[:space:]]__[^__]+=.*$'
+  declare -p | grep -E '[[:space:]]__[^__]+=.*$' | awk '{printf "%s\n", $3}'
 }
 
 __main__help=${__main__help:-''}
@@ -158,7 +158,7 @@ function help__ {
     printf ' %s %s %s [task]\n\n' $(basename $__app__) ${__id__:-'[id]'} ${__parent__}
   fi
   echo 'Parameters:'
-  __params | awk '{ printf " %s\n", $3 }' | sed 's|__|--|g; s|=| |g'
+  __params | awk 'BEGIN {FS="="}; {gsub(/_/, "-", $1); printf " %s %s\n", $1, $2}'
   echo
   echo 'Available tasks:'
   for task in $(__tasks); do
