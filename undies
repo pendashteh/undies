@@ -254,6 +254,7 @@ function __ {
     esac
     shift
     read $_var <<< $_val
+    export $_var
   done
   __run "$@" || __fallback__ "$@" || >&2 echo 'failed to __run '$@
 }
