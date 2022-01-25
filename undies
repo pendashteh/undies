@@ -134,6 +134,28 @@ function __params {
   declare -p | grep -E '[[:space:]]__[^__]+=.*$' | awk '{printf "%s\n", $3}'
 }
 
+function __param {
+  local varname=${FUNCNAME[1]}
+  shift
+  __exists __isset ||
+  function __isset {
+    test ! -z "${!varname}"
+  }
+  __exists __get ||
+  function __get {
+    echo ${!varname}
+  }
+  __exists __set ||
+  function __set {
+    eval "$varname=$1"
+  }
+  __exists __default ||
+  function __default {
+    echo
+  }
+  test ! -z "$1" && __set $1 || __isset && __get || __set $(__default)
+}
+
 __main__help=${__main__help:-''}
 __exists __main__ ||
 function __main__ {
