@@ -174,7 +174,7 @@ function help__ {
     declare -f ${task}__
     return
   fi
-  [[ -n $__main__help ]] && t "$__main__help"
+  [[ -n $__main__help ]] && t "$__main__help" && echo
   if [ ! -z $__id__ ]; then
     echo 'Usage:'
     printf ' %s %s %s [task]\n\n' $(basename $__app__) ${__id__:-'[id]'} ${__parent__}
