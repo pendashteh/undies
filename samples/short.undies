@@ -2,8 +2,14 @@
 
 __message=${__message:-'hello world!'}
 
+function __fallback__ {
+  : 'is run when there is arguments provided.'
+  : '@TODO complete the doco'
+}
+
 __main__help='@args ..anything @prints the arguments for demo.'
 function __main__ {
+  : 'is run when there is no arguments provided.'
   echo 'You ran me with '${@:-'no args.'}
   echo 'Try: '$__app__' help'
 }
