@@ -85,7 +85,7 @@ function __exec {
     read -n 1 -p 'Are you sure? Y|n ' __confirm__
     echo
   }
-  case $__confirm__ in n|N) return;; esac
+  case $__confirm__ in n|N) return 1;; esac
   test -n "${__dryrun__}" && echo '# '"$@" || "$@"
 }
 
