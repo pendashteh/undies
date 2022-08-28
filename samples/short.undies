@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+__message=${__message:-'hello world!'}
+
+function __fallback__ {
+  : 'is run when there is arguments provided.'
+  : '@TODO complete the doco'
+}
+
+__main__help='@args ..anything @prints the arguments for demo.'
+function __main__ {
+  : 'is run when there is no arguments provided.'
+  echo 'You ran me with '${@:-'no args.'}
+  echo 'Try: '$__app__' help'
+}
+
+demo__help='@prints a test with the app name|path.'
+demo__() {
+  printf -- 'Message: %s\n' "$__message"
+  printf -- 'Try running:\n$ %s --message YOUR_MESSAGE demo\n' "${__app__}"
+}
+
+source $(dirname $(realpath $BASH_SOURCE))/vendor/autoload.sh
