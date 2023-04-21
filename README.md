@@ -24,9 +24,9 @@ world__ () {
 ```
 
 ```bash
-$ ./hello.sh
+$ ./hello.sh world
 Hello World!
 
-$ ./hello.sh --who "Universe"
+$ ./hello.sh --who "Universe" world
 Hello Universe!
 ```
