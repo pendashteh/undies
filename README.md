@@ -27,6 +27,6 @@ world__ () {
 $ ./hello.sh
 Hello World!
 
-$ ./hello --world "Universe"
+$ ./hello --who "Universe"
 Hello Universe!
 ```
