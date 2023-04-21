@@ -223,7 +223,8 @@ __autocomplete () {
 }
 
 function __ {
-  __app__=${__app__:-$0}
+  __app__=${__app__:-$(realpath $(which -a "$0" | grep -m1 ""))}
+  __path__=$(dirname $__app__)
   __src__=$0
   : '$ undies -- /path/to/undies'
   if [ "$1" = "--" ] && [ -e "$2" ]; then
