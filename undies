@@ -13,6 +13,9 @@
 # > . undies
 #
 
+# Prevent nested sourcing
+[[ "$__" = __ ]] && return
+
 __API__=4
 
 _err_fn_na=101 ;: 'function does not exists'
@@ -185,6 +188,5 @@ function __main__ {
   __run "$@" || __fallback__ "$@" || >&2 echo 'failed to __run '$@
 }
 
-[[ "$__" = __ ]] && return
 
 __main__ "$@"
