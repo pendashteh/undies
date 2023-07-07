@@ -161,7 +161,7 @@ function __fallback__ {
 }
 
 function __main__ {
-  __src__=${__app__:-$(realpath $BASH_SOURCE[1])}
+  __src__=${__app__:-$(realpath ${BASH_SOURCE[-1]})}
   : '$ undies -- /path/to/undies'
   __path__=$(dirname $__src__)
   # Loop through all the arguments
