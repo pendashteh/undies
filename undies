@@ -115,7 +115,11 @@ function __default__ {
 help__help=${help__help:-'@arg task @does declare task implementation'}
 __exists help__ ||
 function help__ {
-  printf -- 'undies API version %s\n\n' $__API__
+  echo
+  printf -- 'Undies app name: %s\n' $(__app)
+  printf -- 'Undies app path: %s\n' $__src__
+  printf -- 'Undies API version: %s\n' $__API__
+  echo
   if [ -n "$1" ] && __exists ${1}__; then
     local task=$1
     __help $task | sed 's|@|\n@|g'
@@ -133,7 +137,8 @@ function help__ {
   done
   printf -- '\n'
   printf -- 'Usage:\n'
-  printf -- ' $ %s [__param=value] [task]\n' $(__app)
+  printf -- ' $ /path/to/app.undies [__param=value] [task]\n'
+  echo
 }
 
 __puton__help='@does get invoked before any task @return false to stop the application.'
