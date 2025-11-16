@@ -129,7 +129,7 @@ function help__ {
   fi
   [[ -n $__default__help ]] && t "$__default__help" && echo
   echo 'Parameters:'
-  __params
+  __params | grep . || echo n/a
   echo
   echo 'Available tasks:'
   for task in $(__tasks); do
