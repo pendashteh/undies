@@ -1,27 +1,2 @@
-Number 1.
-
-There is an issue when an undie script sources undies as follows:
-```
-. undies
-```
-and then we pass a valid path to this script as an argument.
-```
-$ ./script.undies /path/to/file
-```
-In this case, it will try to source it (at line 70)
-
-Number 2.
-
-Improve the help command.
-```
-Usage:
-$ ./script.undies [tasks]
-
-Available Tasks:
-- task1
-- list
-- task4
-- delete [arg]
-- help [task]
-```
+- [ ] new examples to demonstrate different features for developers and users
 
