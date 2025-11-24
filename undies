@@ -193,5 +193,18 @@ function __main__ {
   __run "$@" || __fallback__ "$@" || >&2 echo 'failed to __run '$@
 }
 
+# this is a private API at the moment.
+# - [ ] expose when undies is called directly, not an undies app.
+__create__help="@arg project name @does create an undies app scafold."
+__create__ () {
+  local name=$1
+  if [[ ! $name ]]; then
+    default=$(basename $(pwd))
+    read -p "Name? [default=$default] " name
+    name=${name:-$default}
+  fi
+  echo creates a project: $name
+  __exec cp ${__path__}/template__ ${name}__
+}
 
 __main__ "$@"
