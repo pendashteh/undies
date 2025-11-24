@@ -116,10 +116,6 @@ help__help=${help__help:-'@arg task @does declare task implementation'}
 __exists help__ ||
 function help__ {
   echo
-  printf -- 'Undies app name: %s\n' $(__app)
-  printf -- 'Undies app path: %s\n' $__src__
-  printf -- 'Undies API version: %s\n' $__API__
-  echo
   if [ -n "$1" ] && __exists ${1}__; then
     local task=$1
     __help $task | sed 's|@|\n@|g'
@@ -137,7 +133,10 @@ function help__ {
   done
   printf -- '\n'
   printf -- 'Usage:\n'
-  printf -- ' $ /path/to/app.undies [__param=value] [task]\n'
+  printf -- ' $ %s [__param=value] [task]\n' $(basename $0)
+  printf -- '\n'
+  printf -- 'Info:\n'
+  printf -- ' $ %s __info\n' $(basename $0)
   echo
 }
 
@@ -158,7 +157,7 @@ __exists __fallback__ ||
 function __fallback__ {
   case $? in
     $_err_fn_na)
-      echo >&2 "task $__return_info wasn't found."
+      echo >&2 "[ERROR] task ${__return_info%__} wasn't found. (implement ${__return_info})"
       ;;
     *)
       >&2 __help $__task__
@@ -205,6 +204,14 @@ __create__ () {
   fi
   echo creates a project: $name
   __exec cp ${__path__}/template__ ${name}__
+}
+
+__info__help="@does show app info"
+__info__ () {
+  echo
+  printf -- 'Undies app name: %s\n' $(__app)
+  printf -- 'Undies app path: %s\n' $__src__
+  printf -- 'Undies API version: %s\n' $__API__
 }
 
 __main__ "$@"
