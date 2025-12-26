@@ -97,6 +97,24 @@ $ undies -- script1.sh -- script2.sh
 $ undies -- __port=3000 app.sh start
 ```
 
+## Bash Autocomplete
+
+Undies includes built-in bash autocomplete for all your tasks and parameters. Enable it with one command:
+
+```bash
+$ ./myapp.sh __install
+$ source ~/.bashrc
+```
+
+Now enjoy tab completion:
+
+```bash
+$ ./myapp.sh <TAB>       # Shows all tasks
+$ ./myapp.sh __<TAB>     # Shows all parameters
+```
+
+For detailed autocomplete documentation, see [docs/Auto_Completion.md](docs/Auto_Completion.md).
+
 ## Lifecycle Hooks
 
 Override these functions to add custom behavior:
@@ -529,4 +547,3 @@ Contributions welcome! Please open an issue or pull request.
 
 The entire source code is human-made.
 This readme file is made by Claude Sonnet 4.5. (with minor tweeks)
-
