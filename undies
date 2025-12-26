@@ -214,4 +214,54 @@ __info__ () {
   printf -- 'Undies API version: %s\n' $__API__
 }
 
+__install__help="@arg name @does install bash completion (auto-detects from command used)"
+__install__ () {
+    local command_name="$1"
+    
+    # If no name provided, use whatever the user typed to invoke this script
+    if [[ -z "$command_name" ]]; then
+        command_name=$(basename "$0")
+    fi
+    
+    local completion_dir="$HOME/.bash_completion.d"
+    local completion_file="$completion_dir/$command_name"
+    
+    mkdir -p "$completion_dir"
+    
+    local tasks=$(__tasks | tr '\n' ' ')
+    local params=$(__params | sed 's/=.*//g' | tr '\n' ' ')
+    
+    cat > "$completion_file" << EOF
+_${command_name//-/_}_complete() {
+    local cur prev words cword
+    _init_completion || return
+    
+    case "\$cur" in
+        __*)
+            local params="$params"
+            COMPREPLY=( \$(compgen -W "\$params" -- "\$cur") )
+            ;;
+        *)
+            local tasks="$tasks"
+            COMPREPLY=( \$(compgen -W "\$tasks help" -- "\$cur") )
+            ;;
+    esac
+}
+
+complete -F _${command_name//-/_}_complete $command_name
+EOF
+    
+    echo "Completion installed for: $command_name"
+    echo "Completion file: $completion_file"
+    
+    if ! grep -q "$completion_dir" ~/.bashrc; then
+        echo ""
+        echo "Add this to your ~/.bashrc:"
+        echo "  for f in ~/.bash_completion.d/*; do source \$f; done"
+        echo "Then run: source ~/.bashrc"
+    else
+        echo "Run: source ~/.bashrc"
+    fi
+}
+
 __main__ "$@"
